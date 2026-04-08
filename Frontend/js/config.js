@@ -7,7 +7,7 @@
     
     if (isProduction) {
         // Production environment
-        window.ENV_API_URL = 'https://chittsaathi-9a0l.onrender.com';
+        window.ENV_API_URL = 'https://chittsaathi-backend.onrender.com';
         console.log('Running in production mode');
     } else {
         // Development environment
