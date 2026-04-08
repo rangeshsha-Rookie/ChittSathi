@@ -130,6 +130,18 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root route for quick deployment verification
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'ChittSaathi backend is live',
+    endpoints: {
+      health: '/health',
+      config: '/api/config'
+    }
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err.stack);
