@@ -1,6 +1,16 @@
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 
+const parseBool = (value, fallback = false) => {
+  if (typeof value !== 'string') return fallback;
+  return value.toLowerCase() === 'true';
+};
+
+const parsePort = (value, fallback) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
 function parseFrom(fromValue) {
   if (!fromValue) {
     return { email: 'noreply@chittsaathi.edu', name: 'ChittSaathi' };
@@ -114,17 +124,33 @@ async function sendEmail(options) {
 
       console.log('Using test email account:', testAccount.user);
     } else {
-      // Configure real email service
-      transporter = nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE || 'gmail',
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: process.env.EMAIL_SECURE === 'true',
+      // Configure real email service with safe defaults for cloud environments.
+      const emailService = process.env.EMAIL_SERVICE || 'gmail';
+      const hasCustomHost = !!process.env.EMAIL_HOST;
+      const secure = parseBool(process.env.EMAIL_SECURE, false);
+      const defaultPort = secure ? 465 : 587;
+      const port = parsePort(process.env.EMAIL_PORT, defaultPort);
+
+      const transportConfig = {
+        service: emailService,
+        secure,
+        port,
+        connectionTimeout: 20000,
+        greetingTimeout: 20000,
+        socketTimeout: 30000,
         auth: {
           user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD
+          // App passwords are often copied with spaces; remove internal spaces safely.
+          pass: (process.env.EMAIL_PASSWORD || '').replace(/\s+/g, '')
         }
-      });
+      };
+
+      // If custom host is provided, keep it; otherwise let nodemailer resolve service defaults.
+      if (hasCustomHost) {
+        transportConfig.host = process.env.EMAIL_HOST;
+      }
+
+      transporter = nodemailer.createTransport(transportConfig);
     }
     
     // Set up email options
@@ -141,7 +167,38 @@ async function sendEmail(options) {
     };
     
     // Send the email
-    const info = await transporter.sendMail(mailOptions);
+    let info;
+    try {
+      info = await transporter.sendMail(mailOptions);
+    } catch (smtpError) {
+      // Render/cloud occasionally times out on implicit TLS 465. Retry with STARTTLS on 587 for Gmail.
+      const emailService = (process.env.EMAIL_SERVICE || 'gmail').toLowerCase();
+      const shouldRetryGmail =
+        emailService === 'gmail' &&
+        (smtpError && (smtpError.code === 'ETIMEDOUT' || String(smtpError.message || '').includes('Connection timeout')));
+
+      if (!shouldRetryGmail) {
+        throw smtpError;
+      }
+
+      console.warn('Primary SMTP connection timed out. Retrying with Gmail STARTTLS (587).');
+      const retryTransporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        connectionTimeout: 20000,
+        greetingTimeout: 20000,
+        socketTimeout: 30000,
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: (process.env.EMAIL_PASSWORD || '').replace(/\s+/g, '')
+        }
+      });
+
+      info = await retryTransporter.sendMail(mailOptions);
+    }
     
     // Log email preview URL in development
     if (isDev) {
