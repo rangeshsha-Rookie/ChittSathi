@@ -195,6 +195,58 @@ async function classifyEmotionUnlimited(input) {
   }
 }
 
+// @desc    Analyze face emotion from image
+// @route   POST /api/ai/analyze-face
+// @access  Private
+const analyzeFace = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file provided' });
+    }
+
+    const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000/predict-face';
+    console.log(`[ML] Forwarding image to: ${ML_SERVICE_URL}`);
+
+    // Create form data for the ML service
+    const FormData = require('form-data');
+    const form = new FormData();
+    form.append('file', req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+    });
+
+    const response = await axios.post(ML_SERVICE_URL, form, {
+      headers: {
+        ...form.getHeaders(),
+      },
+      timeout: 10000 // 10s timeout
+    });
+
+    if (response.data && response.data.success) {
+      console.log(`[ML] Detected Mood: ${response.data.moodLabel} (${Math.round(response.data.confidence * 100)}%)`);
+      return res.status(200).json({
+        success: true,
+        mood: response.data.mood,
+        moodLabel: response.data.moodLabel,
+        confidence: response.data.confidence
+      });
+    }
+
+    throw new Error('ML Service returned unsuccessful response');
+
+  } catch (error) {
+    console.error('Face Analysis Error:', error.message);
+    // Graceful degradation: Return Neutral if ML fails
+    res.status(200).json({
+      success: true,
+      mood: 4, // Neutral
+      moodLabel: 'Neutral',
+      confidence: 0,
+      note: 'Analysis failed, using fallback'
+    });
+  }
+};
+
 // @desc    Generate AI chat response
 // @route   POST /api/ai/chat
 // @access  Private
@@ -567,5 +619,6 @@ module.exports = {
   getConversationHistory,
   clearConversationHistory,
   classifyEmotionUnlimited,
-  retrieveRAGContext
+  retrieveRAGContext,
+  analyzeFace
 };
