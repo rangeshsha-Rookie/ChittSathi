@@ -1223,7 +1223,7 @@ function validateRegisterForm(event) {
 
             if (data.success) {
                 // Store email for OTP verification
-                sessionStorage.setItem('registerEmail', email);
+                localStorage.setItem('registrationEmail', email);
 
                 // For development mode, handle direct OTP
                 if (data.devMode && data.devOtp) {
@@ -1787,7 +1787,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ...existing code...
 
     // Set up OTP resend button correctly
-    const resendButton = document.getElementById('resend-otp');
+    const resendButton = document.getElementById('resend-otp-btn');
     if (resendButton) {
         resendButton.addEventListener('click', (e) => {
             e.preventDefault();

@@ -34,3 +34,15 @@ services:
         sync: false
       - key: ML_SERVICE_URL
         sync: false
+
+  - type: web
+    name: chittsaathi-ml
+    runtime: python
+    rootDir: Backend/MoodModel
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn fastapi_app:app --host 0.0.0.0 --port 8000
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "crisis_1",
+    "text": "If you are in immediate danger or having suicidal thoughts, please call the National Suicide Prevention Lifeline at 988 or go to the nearest emergency room.",
+    "metadata": { "category": "Crisis", "source": "Campus Safety" }
+  },
+  {
+    "id": "cbt_1",
+    "text": "The '5-4-3-2-1' Grounding Technique: Name 5 things you see, 4 you can touch, 3 you hear, 2 you can smell, and 1 you can taste. This helps reduce anxiety in the moment.",
+    "metadata": { "category": "CBT", "source": "Wellness Guide" }
+  },
+  {
+    "id": "campus_1",
+    "text": "The University Counseling Center is located in Building A, Room 204. Open Mon-Fri 9am-5pm. Walk-ins are welcome for urgent needs.",
+    "metadata": { "category": "Campus", "source": "University Handbook" }
+  },
+  {
+    "id": "wellness_1",
+    "text": "Research shows that 7-9 hours of sleep is critical for student mental health. Try to maintain a consistent sleep schedule even on weekends.",
+    "metadata": { "category": "Wellness", "source": "Sleep Foundation" }
+  }
+]
