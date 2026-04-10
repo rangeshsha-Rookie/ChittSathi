@@ -34,3 +34,4 @@ Include the following:
 - Do not exploit vulnerabilities beyond what is needed for proof.
 
 Thank you for helping keep ChittSaathi and its users safe.
+<!-- Last reviewed: April 10 2026 -->

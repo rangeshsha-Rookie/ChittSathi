@@ -33,3 +33,5 @@ ChittSaathi exists to support student mental health. Contributions should improv
 ## Moderation
 
 Moderation decisions follow `CODE_OF_CONDUCT.md` and are made to protect community safety.
+
+<!-- Last reviewed: April 10 2026 -->

@@ -25,3 +25,5 @@ We will prioritize:
 1. Security and privacy issues
 2. Critical defects affecting student workflows
 3. Reproducible bugs with clear details
+
+<!-- Last reviewed: April 10 2026 -->

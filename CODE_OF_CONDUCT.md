@@ -41,3 +41,5 @@ Enforcement decisions are made to protect community safety.
 ## Scope
 
 This Code of Conduct applies to project spaces, issue and PR discussions, and related communications.
+
+<!-- Last reviewed: April 10 2026 -->

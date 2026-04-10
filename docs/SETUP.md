@@ -54,3 +54,5 @@ Then serve `Frontend` with one of these options:
 2. Start backend (`Backend`, port 5001).
 3. Start ML service (`Backend/MoodModel`, port 5000).
 4. Open frontend from `Frontend/index.html` (or via Live Server).
+
+<!-- Updated: Production deployment completed April 10 2026 -->
