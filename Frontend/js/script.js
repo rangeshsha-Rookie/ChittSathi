@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     mobileMenu.appendChild(clonedNavLinks);
                 }
                 
-                // Check if user is logged in and add appropriate menu items
-                const authToken = localStorage.getItem('authToken');
-                if (authToken) {
+                // Check if user is logged in using central auth helper
+                const auth = getAuthData();
+                if (auth.isLoggedIn) {
                     // User is logged in - show profile menu
                     const profileContainer = document.createElement('div');
                     profileContainer.className = 'mobile-profile';
@@ -1479,11 +1479,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Check if user is already logged in
-    const authToken = localStorage.getItem('authToken');
+    // Check if user is already logged in using central auth helper
+    const auth = getAuthData();
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
-    if (authToken) {
+    if (auth.isLoggedIn) {
         // Update header UI for logged-in user
         updateHeaderForLoggedInUser(userData);
     } else {
@@ -1515,8 +1515,9 @@ function updateNavigation() {
 
     // Clear existing navigation links
     navLinks.innerHTML = '';
+    const auth = getAuthData();
 
-    if (authToken) {
+    if (auth.isLoggedIn) {
         // User is logged in, show all navigation links
         navLinks.innerHTML = `
             <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}>Home</a></li>
