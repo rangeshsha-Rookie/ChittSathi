@@ -624,12 +624,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const apiUrl = `${apiConfig.backendApiUrl}/api/ai/analyze-face`;
 
+                    // IMPORTANT: For FormData/file uploads, do NOT include Content-Type header.
+                    // The browser must set it automatically with the multipart boundary.
+                    const uploadHeaders = {};
+                    if (auth.isLoggedIn && auth.authToken) {
+                        uploadHeaders['Authorization'] = `Bearer ${auth.authToken}`;
+                    }
+
+                    // Add a 20-second timeout so the UI never hangs forever
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 20000);
+
                     fetch(apiUrl, {
                         method: 'POST',
-                        headers: auth.isLoggedIn ? auth.headers : {},
-                        body: formData
+                        headers: uploadHeaders,
+                        body: formData,
+                        signal: controller.signal
                     })
-                    .then(r => r.json())
+                    .then(r => {
+                        clearTimeout(timeoutId);
+                        return r.json();
+                    })
                     .then(data => {
                         if (data && data.success) {
                             predictions.push({
@@ -642,7 +657,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.warn(`Frame ${captureCount + 1}: no face detected or failed`, data?.message);
                         }
                     })
-                    .catch(err => console.warn(`Frame ${captureCount + 1} fetch error:`, err))
+                    .catch(err => {
+                        clearTimeout(timeoutId);
+                        if (err.name === 'AbortError') {
+                            console.warn(`Frame ${captureCount + 1}: Request timed out (20s)`);
+                        } else {
+                            console.warn(`Frame ${captureCount + 1} fetch error:`, err.message);
+                        }
+                    })
                     .finally(() => {
                         captureCount++;
 

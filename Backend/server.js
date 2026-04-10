@@ -29,16 +29,26 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// --- CORS: Allow all origins explicitly (required for Render + Vercel setup) ---
 const corsOptions = {
-  origin: true, // Dynamically allow the request origin
+  origin: function (origin, callback) {
+    // Allow ALL origins (including Vercel, localhost, mobile, dev tools)
+    // This is required because Render does not reliably pass `origin: true`
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 200 // Some browsers (IE11) choke on 204 for preflight
 };
 
-// Use the CORS middleware with options
+// Apply CORS middleware globally FIRST
 app.use(cors(corsOptions));
+
+// Explicitly handle ALL OPTIONS preflight requests
+// This must be BEFORE any route definitions
+app.options('*', cors(corsOptions));
+
 
 // MongoDB connection with improved error handling
 const connectDB = async () => {
