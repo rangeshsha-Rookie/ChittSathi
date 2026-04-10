@@ -136,8 +136,49 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
+// Start server with Socket.io signaling
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: corsOptions
+});
+
+// Signaling logic
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+
+  socket.on('join-room', (roomId) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room: ${roomId}`);
+    socket.to(roomId).emit('user-connected', socket.id);
+  });
+
+  socket.on('offer', (data) => {
+    socket.to(data.roomId).emit('offer', {
+      offer: data.offer,
+      senderId: socket.id
+    });
+  });
+
+  socket.on('answer', (data) => {
+    socket.to(data.roomId).emit('answer', {
+      answer: data.answer,
+      senderId: socket.id
+    });
+  });
+
+  socket.on('ice-candidate', (data) => {
+    socket.to(data.roomId).emit('ice-candidate', {
+      candidate: data.candidate,
+      senderId: socket.id
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} with Socket.io enabled`);
 });
