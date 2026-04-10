@@ -1,11 +1,14 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const authToken = localStorage.getItem('authToken');
-    const isLoggedIn = Boolean(authToken);
-    
-    // Set up authentication header for API requests
-    const headers = {
-        'Content-Type': 'application/json',
-        ...(isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {})
+    // dynamic auth check to prevent stale state
+    const getAuthData = () => {
+        const token = localStorage.getItem('authToken');
+        return {
+            token: token,
+            isLoggedIn: Boolean(token),
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            }
+        };
     };
     
     // Elements for AI mood detection
@@ -73,9 +76,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Save manual mood button click handler
     saveManualMoodBtn.addEventListener('click', function() {
-        if (!isLoggedIn) {
+        const auth = getAuthData();
+        if (!auth.isLoggedIn) {
             if (typeof window.requireAuth === 'function') {
                 window.requireAuth('Login to save your mood.');
+            } else {
+                alert('Please login to save your mood.');
             }
             return;
         }
@@ -86,16 +92,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const notes = moodNotes.value;
-        
-        // Save the mood to the server
         saveManualMood(selectedMood.value, selectedMood.label, notes);
     });
     
     // Capture mood with AI button click handler
     captureBtn.addEventListener('click', function() {
-        if (!isLoggedIn) {
+        const auth = getAuthData();
+        console.log('Capture button clicked. Auth state:', auth.isLoggedIn);
+        
+        if (!auth.isLoggedIn) {
             if (typeof window.requireAuth === 'function') {
                 window.requireAuth('Login to use AI mood detection.');
+            } else {
+                alert('Please login to use AI mood detection.');
             }
             return;
         }
@@ -105,21 +114,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to initialize the page
     async function initializePage() {
+        const auth = getAuthData();
+        console.log('Initializing mood page. Auth:', auth.isLoggedIn);
+        
         // Load API configuration from frontend environment config
         loadApiConfig();
 
-        // Initialize chart for all users
-        initMoodChart();
+        // Initialize chart safely
+        try {
+            initMoodChart();
+        } catch (e) {
+            console.error('Chart initialization failed:', e);
+        }
 
-        if (!isLoggedIn) {
+        if (!auth.isLoggedIn) {
             showGuestMoodState();
             return;
         }
         
-        // Check if user has recently tracked their mood
+        // Check recent mood items
         checkRecentMood();
-        
-        // Load mood history
         loadMoodHistory();
     }
 
@@ -431,27 +445,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to save mood data (common function for both AI and manual)
     async function saveMoodData(value, label, notes, captureMethod) {
-        if (!isLoggedIn) {
-            if (typeof window.requireAuth === 'function') {
-                window.requireAuth('Login to save your mood.');
-            }
+        const auth = getAuthData();
+        if (!auth.isLoggedIn) {
+            showError('Session expired. Please login again.');
             return false;
         }
 
-        // Always define originalText at the top
         const targetBtn = captureMethod === 'ai' ? captureBtn : saveManualMoodBtn;
         const originalText = targetBtn.textContent;
         try {
-            // Show saving indicator
             targetBtn.disabled = true;
             targetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             
-            // Use backend API URL from config
             const apiUrl = `${apiConfig.backendApiUrl}/api/mood`;
-            console.log('Sending mood data to:', apiUrl);
             const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers,
+                headers: auth.headers,
                 body: JSON.stringify({
                     value,
                     label,
@@ -460,49 +469,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
             
-            // Check if response is ok before parsing JSON
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const data = await response.json();
-            
-            // Reset button state
             targetBtn.disabled = false;
             targetBtn.textContent = originalText;
             
             if (data.success) {
-                showSuccess(`Your mood has been ${captureMethod === 'ai' ? 'detected' : 'recorded'} as ${label}!`);
-                
-                // Reset form if this was a manual entry
+                showSuccess(`Mood ${captureMethod === 'ai' ? 'detected' : 'saved'} as ${label}!`);
                 if (captureMethod === 'manual') {
                     moodOptions.forEach(opt => opt.classList.remove('selected'));
                     moodNotes.value = '';
                     selectedMood = null;
                 }
-                
-                // Reload mood history to show the new entry
                 await loadMoodHistory();
-                
-                // Update mood tracker button
                 updateMoodTrackerButton({ value, label });
-                
-                // Load recommendations for the detected mood
                 await loadRecommendations(label);
-                
                 return true;
             } else {
-                showError('Failed to save your mood. Please try again.');
+                showError(data.message || 'Failed to save mood.');
                 return false;
             }
         } catch (error) {
-            console.error('Error saving mood:', error);
-            showError(`Failed to save your mood: ${error.message}`);
-            // Reset button state
+            console.error('Save mood error:', error);
+            showError(`Error: ${error.message}`);
             targetBtn.disabled = false;
-            targetBtn.textContent = originalText || (captureMethod === 'ai' ? 'Capture Mood with AI' : 'Save Manual Mood');
+            targetBtn.textContent = originalText;
             return false;
         }
+    }
+
+    // Fail-safe notification helpers
+    function showSuccess(msg) {
+        if (typeof window.showSuccess === 'function') window.showSuccess(msg);
+        else console.log('SUCCESS:', msg);
+    }
+    function showError(msg) {
+        if (typeof window.showError === 'function') window.showError(msg);
+        else {
+            console.error('ERROR:', msg);
+            if (result) result.innerHTML = `<div class="result-content" style="background:#fdeded">${msg}</div>`;
+        }
+    }
+    function showWarning(msg) {
+        if (typeof window.showWarning === 'function') window.showWarning(msg);
+        else alert(msg);
     }
     
     // Replace existing saveManualMood function with this improved version
@@ -512,10 +523,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to start the mood capture process with AI
     async function startMoodCapture() {
-        if (!isLoggedIn) {
-            if (typeof window.requireAuth === 'function') {
-                window.requireAuth('Login to use AI mood detection.');
-            }
+        const auth = getAuthData();
+        if (!auth.isLoggedIn) {
+            showWarning('Please login first.');
             return;
         }
 
@@ -526,17 +536,25 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show analyzing message
             result.innerHTML = '<div class="result-content">Preparing camera...</div>';
             
-            // Access webcam
-            mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { width: 640, height: 480 } 
-            });
+            // Try high-resolution first, fallback to simple video if it fails
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: { ideal: 640 }, height: { ideal: 480 } } 
+                });
+            } catch (innerError) {
+                console.warn('High-res camera request failed, trying simple constraints...', innerError);
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            }
             
             // Display video stream
             video.srcObject = mediaStream;
             
             // Wait for video to be ready
-            await new Promise(resolve => {
-                video.onloadedmetadata = resolve;
+            await new Promise((resolve, reject) => {
+                video.onloadedmetadata = () => resolve();
+                video.onerror = (e) => reject(e);
+                // Timeout after 3 seconds if metadata never loads
+                setTimeout(() => reject(new Error("Video metadata timeout")), 3000);
             });
             
             // Start video playback
@@ -546,8 +564,21 @@ document.addEventListener('DOMContentLoaded', function() {
             result.innerHTML = '<div class="result-content">Get ready for mood detection...</div>';
             startCountdown();
         } catch (error) {
-            console.error('Error accessing camera:', error);
-            result.innerHTML = '<div class="result-content">Error accessing camera. Please check permissions.</div>';
+            console.error('Detailed camera error:', error);
+            let errorMsg = 'Error accessing camera.';
+            
+            // Provide more specific feedback based on error type
+            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                errorMsg = 'Camera permission denied. Please allow camera access in your browser settings.';
+            } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+                errorMsg = 'No camera found. Please connect a webcam.';
+            } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+                errorMsg = 'Camera is already in use by another application. Please close other apps using the camera.';
+            } else {
+                errorMsg += ` (${error.message || error.name})`;
+            }
+            
+            result.innerHTML = `<div class="result-content">${errorMsg}</div>`;
             result.style.backgroundColor = '#fdeded';
             captureBtn.disabled = false;
         }
