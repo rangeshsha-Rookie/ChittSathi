@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', function() {
     // Auth is now handled by the shared common-auth.js
     // Dynamic getAuthData() is available globally
     
@@ -7,9 +8,15 @@
     const captureBtn = document.getElementById('captureBtn');
     const countdown = document.getElementById('countdown');
     const result = document.getElementById('result');
+
+    // Guard: if essential elements don't exist, abort gracefully
+    if (!canvas || !video || !captureBtn) {
+        console.warn('Mood tracker elements not found on this page, skipping initialization.');
+        return;
+    }
+
+    // Canvas context and dimensions
     const ctx = canvas.getContext('2d');
-    
-    // Set canvas dimensions
     canvas.width = 640;
     canvas.height = 480;
     
@@ -971,4 +978,4 @@
     window.openPDF = function(file) {
         window.open(file, '_blank');
     };
-});
+}); // end DOMContentLoaded
