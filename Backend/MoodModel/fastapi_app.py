@@ -7,6 +7,10 @@ import uvicorn
 import os
 import io
 
+# Global variables
+model = None
+faceDetect = None
+
 app = FastAPI(title="ChittSaathi Mood Prediction Service")
 
 # Enable CORS
