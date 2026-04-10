@@ -214,19 +214,31 @@ const analyzeFace = async (req, res) => {
       timeout: 15000 
     });
 
-    if (response.data && response.data.success) {
-      const userId = req.user?.id;
-      if (userId) {
-        await new Mood({
-          user: userId,
-          value: response.data.mood,
-          label: response.data.moodLabel,
-          capturedVia: 'ai'
-        }).save().catch(() => {});
+    // Case 1: ML service responded with a result (even if no face detected)
+    if (response.data) {
+      if (response.data.success) {
+        // Face detected! Save mood to DB
+        const userId = req.user?.id;
+        if (userId) {
+          await new Mood({
+            user: userId,
+            value: response.data.mood,
+            label: response.data.moodLabel,
+            capturedVia: 'ai'
+          }).save().catch(() => {});
+        }
+        return res.status(200).json({ ...response.data, saved: !!userId });
+      } else {
+        // ML service responded but no face was detected - return helpful message
+        console.log('ML response: No face detected or low confidence');
+        return res.status(200).json({
+          success: false,
+          error: response.data.error || 'No face detected',
+          message: 'No face was detected. Please ensure your face is clearly visible, well-lit, and centered in the camera.'
+        });
       }
-      return res.status(200).json({ ...response.data, saved: !!userId });
     }
-    throw new Error('ML Service Error: Failed to predict emotion');
+    throw new Error('ML Service returned empty response');
   } catch (error) {
     // ENHANCED DIAGNOSTIC LOGGING
     console.error('--- DIAGNOSTIC ERROR START ---');
@@ -241,7 +253,7 @@ const analyzeFace = async (req, res) => {
     
     res.status(500).json({ 
       success: false, 
-      message: 'AI Analysis currently unavailable.',
+      message: 'AI Analysis currently unavailable. Please check your camera and try again.',
       details: error.message 
     });
   }
