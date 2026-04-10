@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
     // API Configuration
     const apiConfig = window.ENV_CONFIG || {
         backendApiUrl: window.ENV_API_URL || 'http://localhost:5001',
@@ -1896,4 +1895,4 @@ const mediaModalCSS = `
 
 // Inject CSS for media modal
 document.head.insertAdjacentHTML('beforeend', mediaModalCSS);
-}); // end DOMContentLoaded
+
