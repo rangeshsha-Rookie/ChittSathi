@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 python-multipart
-opencv-python-headless
-numpy
-tensorflow-cpu
-keras
+transformers
+torch
+torchvision
+Pillow

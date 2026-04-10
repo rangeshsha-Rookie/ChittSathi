@@ -1,14 +1,12 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-import cv2
-import numpy as np
-from keras.models import load_model
-import os
+from transformers import pipeline
+from PIL import Image
 import io
+import torch
 
-app = FastAPI(title="ChittSaathi Mood Prediction Service (HuggingFace Edition)")
+app = FastAPI(title="ChittSaathi Mood Prediction Service")
 
-# Enable CORS for Vercel/Render integration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,93 +15,85 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- MODEL LOADING ---
-# HF Spaces handles relative paths within the Space repo
-MODEL_PATH = 'model_file_30epochs.h5'
-if not os.path.exists(MODEL_PATH):
-    MODEL_PATH = 'model_file.h5'
-
-print(f"INFO: Loading model from {MODEL_PATH}...")
+# Load pretrained ViT model once at startup
+# trpakov/vit-face-expression trained on FER+ — ~85% real-world accuracy
+print("INFO: Loading pretrained ViT emotion model...")
 try:
-    if os.path.exists(MODEL_PATH):
-        model = load_model(MODEL_PATH)
-        print("INFO: Model loaded successfully")
-    else:
-        print(f"ERROR: Model file {MODEL_PATH} not found")
-        model = None
+    emotion_pipe = pipeline(
+        "image-classification",
+        model="trpakov/vit-face-expression",
+        device=0 if torch.cuda.is_available() else -1
+    )
+    print("INFO: Model loaded successfully")
 except Exception as e:
     print(f"ERROR: Failed to load model: {e}")
-    model = None
+    emotion_pipe = None
 
-CASCADE_PATH = 'haarcascade_frontalface_default.xml'
-if os.path.exists(CASCADE_PATH):
-    faceDetect = cv2.CascadeClassifier(CASCADE_PATH)
-    print("INFO: Cascade loaded successfully")
-else:
-    print(f"ERROR: Cascade file {CASCADE_PATH} not found")
-    faceDetect = None
-
-labels_dict = {0: 'Angry', 1: 'Disgust', 2: 'Fear', 3: 'Happy', 4: 'Neutral', 5: 'Sad', 6: 'Surprise'}
+# Label map — matches mood.js moodEmojis keys exactly
+LABEL_MAP = {
+    "angry":    {"label": "Angry",    "value": 0},
+    "disgust":  {"label": "Disgust",  "value": 1},
+    "fear":     {"label": "Fear",     "value": 2},
+    "happy":    {"label": "Happy",    "value": 3},
+    "neutral":  {"label": "Neutral",  "value": 4},
+    "sad":      {"label": "Sad",      "value": 5},
+    "surprise": {"label": "Surprise", "value": 6},
+}
 
 @app.get("/")
 async def root():
     return {
-        "message": "ChittSaathi Mood Prediction API is LIVE on HuggingFace",
+        "message": "ChittSaathi Mood Prediction API is LIVE",
+        "model": "trpakov/vit-face-expression",
         "status": "Online",
-        "model_loaded": model is not None,
-        "device": "CPU (HF Free Tier)"
+        "model_loaded": emotion_pipe is not None
     }
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "model_ready": model is not None}
+    return {"status": "healthy", "model_ready": emotion_pipe is not None}
 
 @app.post("/predict-face")
 async def predict_face(image: UploadFile = File(...)):
-    if model is None or faceDetect is None:
-        raise HTTPException(status_code=503, detail="Model service not fully initialized")
+    if emotion_pipe is None:
+        return {
+            "success": False,
+            "error": "Model not loaded",
+            "mood": 4,
+            "moodLabel": "Neutral",
+            "confidence": 0.0
+        }
 
     try:
         contents = await image.read()
-        nparr = np.frombuffer(contents, np.uint8)
-        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        img = Image.open(io.BytesIO(contents)).convert("RGB")
 
-        if frame is None:
-            raise HTTPException(status_code=400, detail="Could not decode image")
+        # Run ViT inference
+        results = emotion_pipe(img)
+        top = results[0]
+        raw_label = top["label"].lower()
+        confidence = round(top["score"], 4)
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = faceDetect.detectMultiScale(gray, 1.3, 3)
-
-        if len(faces) == 0:
-            return {
-                "success": False, 
-                "error": "No face detected", 
-                "mood": None, 
-                "moodLabel": "Neutral" # Fallback to Neutral for better UX
-            }
-
-        x, y, w, h = faces[0]
-        sub_face_img = gray[y:y+h, x:x+w]
-        resized = cv2.resize(sub_face_img, (48, 48))
-        normalize = resized / 255.0
-        reshaped = np.reshape(normalize, (1, 48, 48, 1))
-        
-        result = model.predict(reshaped)
-        label = int(np.argmax(result, axis=1)[0])
-        emotion = labels_dict.get(label, "Unknown")
+        mapped = LABEL_MAP.get(raw_label, {"label": "Neutral", "value": 4})
 
         return {
             "success": True,
-            "mood": label,
-            "moodLabel": emotion,
-            "confidence": float(np.max(result))
+            "mood": mapped["value"],
+            "moodLabel": mapped["label"],
+            "confidence": confidence,
+            "raw_label": raw_label
         }
 
     except Exception as e:
-        print(f"Error in prediction: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"ERROR in prediction: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "mood": 4,
+            "moodLabel": "Neutral",
+            "confidence": 0.0
+        }
 
 if __name__ == "__main__":
     import uvicorn
-    # Important: HF Spaces default to port 7860
     uvicorn.run(app, host="0.0.0.0", port=7860)
