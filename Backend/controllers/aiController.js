@@ -207,11 +207,11 @@ const analyzeFace = async (req, res) => {
     const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000/predict-face';
     
     const form = new FormData();
-    form.append('file', req.file.buffer, { filename: req.file.originalname, contentType: req.file.mimetype });
+    form.append('image', req.file.buffer, { filename: req.file.originalname, contentType: req.file.mimetype });
 
     const response = await axios.post(ML_SERVICE_URL, form, {
       headers: { ...form.getHeaders() },
-      timeout: 10000 
+      timeout: 15000 
     });
 
     if (response.data && response.data.success) {
@@ -226,9 +226,10 @@ const analyzeFace = async (req, res) => {
       }
       return res.status(200).json({ ...response.data, saved: !!userId });
     }
-    throw new Error('ML Service Error');
+    throw new Error('ML Service Error: Failed to predict emotion');
   } catch (error) {
-    res.status(200).json({ success: true, mood: 4, moodLabel: 'Neutral', confidence: 0 });
+    console.error('Mood Analysis Error:', error.message);
+    res.status(500).json({ success: false, message: 'AI Analysis currently unavailable. Please try again or use manual tracking.' });
   }
 };
 
