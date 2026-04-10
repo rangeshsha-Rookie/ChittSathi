@@ -3,10 +3,13 @@
   <h1>ChittSaathi</h1>
   <p><em>Supporting student mental health across higher education institutions in India</em></p>
   
-  [![SIH Project](https://img.shields.io/badge/Smart_India_Hackathon-Project-blue.svg)](https://www.sih.gov.in/)
-  [![Student Mental Health](https://img.shields.io/badge/Focus-Student_Mental_Health-green.svg)](https://chittsaathi.edu)
-  [![Status](https://img.shields.io/badge/Status-In_Development-yellow.svg)](https://github.com/yourusername/chittsaathi)
+  [![SIH Project](https://img.shields.io/badge/Smart_India_Hackathon-2025-blue.svg)](https://www.sih.gov.in/)
+  [![Student Mental Health](https://img.shields.io/badge/Focus-Student_Mental_Health-green.svg)](https://chitt-sathi.vercel.app)
+  [![Status](https://img.shields.io/badge/Status-Production_Live-brightgreen.svg)](https://chitt-sathi.vercel.app)
   [![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
+  [![Frontend](https://img.shields.io/badge/Frontend-Vercel-black.svg)](https://chitt-sathi.vercel.app)
+  [![Backend](https://img.shields.io/badge/Backend-Render-purple.svg)](https://chittsaathi-backend.onrender.com)
+  [![ML Model](https://img.shields.io/badge/ML-HuggingFace-yellow.svg)](https://huggingface.co/spaces/Ramesh-20/chittsaathi-ml)
 </div>
 
 # ChittSaathi 🧠
