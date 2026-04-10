@@ -228,8 +228,22 @@ const analyzeFace = async (req, res) => {
     }
     throw new Error('ML Service Error: Failed to predict emotion');
   } catch (error) {
-    console.error('Mood Analysis Error:', error.message);
-    res.status(500).json({ success: false, message: 'AI Analysis currently unavailable. Please try again or use manual tracking.' });
+    // ENHANCED DIAGNOSTIC LOGGING
+    console.error('--- DIAGNOSTIC ERROR START ---');
+    console.error('Message:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', JSON.stringify(error.response.data));
+    } else if (error.request) {
+      console.error('No response received from ML Service. Check if Space is sleeping.');
+    }
+    console.error('--- DIAGNOSTIC ERROR END ---');
+    
+    res.status(500).json({ 
+      success: false, 
+      message: 'AI Analysis currently unavailable.',
+      details: error.message 
+    });
   }
 };
 
