@@ -1,7 +1,9 @@
 const Conversation = require('../models/Conversation');
+const Mood = require('../models/Mood');
 const { OpenAI } = require('openai');
 const { Pinecone } = require('@pinecone-database/pinecone');
 const axios = require('axios');
+const FormData = require('form-data');
 
 // Initialize Arize Phoenix Global Config
 const PHOENIX_ENDPOINT = process.env.PHOENIX_COLLECTOR_ENDPOINT || 'http://localhost:6006';
@@ -208,7 +210,6 @@ const analyzeFace = async (req, res) => {
     console.log(`[ML] Forwarding image to: ${ML_SERVICE_URL}`);
 
     // Create form data for the ML service
-    const FormData = require('form-data');
     const form = new FormData();
     form.append('file', req.file.buffer, {
       filename: req.file.originalname,
@@ -224,11 +225,34 @@ const analyzeFace = async (req, res) => {
 
     if (response.data && response.data.success) {
       console.log(`[ML] Detected Mood: ${response.data.moodLabel} (${Math.round(response.data.confidence * 100)}%)`);
+      
+      const userId = req.user?.id;
+      let savedToDb = false;
+
+      // Automatically save to database if user is logged in
+      if (userId) {
+        try {
+          const newMood = new Mood({
+            user: userId,
+            value: response.data.mood,
+            label: response.data.moodLabel,
+            capturedVia: 'ai',
+            notes: 'AI Detected during chat session'
+          });
+          await newMood.save();
+          savedToDb = true;
+          console.log(`[DB] Mood saved for user: ${userId}`);
+        } catch (dbError) {
+          console.error('[DB] Failed to save AI mood:', dbError.message);
+        }
+      }
+
       return res.status(200).json({
         success: true,
         mood: response.data.mood,
         moodLabel: response.data.moodLabel,
-        confidence: response.data.confidence
+        confidence: response.data.confidence,
+        saved: savedToDb
       });
     }
 
