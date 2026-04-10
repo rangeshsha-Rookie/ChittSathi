@@ -21,7 +21,7 @@
     window.ENV_CONFIG = {
         // API URLs
         backendApiUrl: window.ENV_API_URL,
-        // UPDATED FROM HUGGING FACE SCREENSHOT
-        mlServiceUrl: 'https://rangesh-28-chittsaathi-ml.hf.space/predict-face'
+        // UPDATED FROM CORRECT HUGGING FACE URL
+        mlServiceUrl: 'https://ramesh-20-chittsaathi-ml.hf.space/predict-face'
     };
 })();
