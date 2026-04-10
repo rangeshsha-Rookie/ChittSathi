@@ -29,41 +29,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Configure CORS to allow requests from multiple frontend origins
-const ALWAYS_ALLOWED = [
-  'https://chitt-sathi.vercel.app',
-  'https://chittsaathi.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:5000',
-  'http://localhost:5500',
-  'http://127.0.0.1:5500'
-];
-
 const corsOptions = {
-  origin: function(origin, callback) {
-    // Read additional allowed origins from .env (comma-separated)
-    const envOrigins = process.env.ALLOWED_ORIGINS
-      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
-      : [];
-    
-    const allowedOrigins = [...new Set([...ALWAYS_ALLOWED, ...envOrigins])];
-
-    // Allow requests with no origin (mobile apps, curl, Postman, etc.)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('Blocked by CORS - Origin:', origin, '| Allowed:', allowedOrigins);
-      callback(new Error(`Not allowed by CORS: ${origin}`));
-    }
-  },
+  origin: true, // Dynamically allow the request origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
-  preflightContinue: false,
   optionsSuccessStatus: 204
 };
 
