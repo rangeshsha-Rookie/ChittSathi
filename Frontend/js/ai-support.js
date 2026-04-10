@@ -1,14 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Allow page access for guests; protect chat operations.
-    const authToken = localStorage.getItem('authToken');
-    const isLoggedIn = Boolean(authToken);
-    
-    // Set up authentication header for API requests
-    const headers = {
-        'Content-Type': 'application/json',
-        ...(isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {})
-    };
-    
     // API Configuration
     const apiConfig = window.ENV_CONFIG || {
         backendApiUrl: window.ENV_API_URL || 'http://localhost:5001',
@@ -50,8 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to initialize the page
     async function initializePage() {
+        const auth = getAuthData();
         // Check and update mood status only for logged-in users
-        if (isLoggedIn) {
+        if (auth.isLoggedIn) {
             await checkMoodStatus();
             loadConversationHistory();
         } else {
@@ -90,11 +80,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to check mood status
     async function checkMoodStatus() {
+        const auth = getAuthData();
         try {
             const apiUrl = `${apiConfig.backendApiUrl}/api/mood/recent`;
             const response = await fetch(apiUrl, {
                 method: 'GET',
-                headers
+                headers: auth.headers
             });
             
             const data = await response.json();
@@ -184,7 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Quick action buttons
         quickActionButtons.forEach(button => {
             button.addEventListener('click', function() {
-                if (!isLoggedIn) {
+                const auth = getAuthData();
+                if (!auth.isLoggedIn) {
                     if (typeof window.requireAuth === 'function') {
                         window.requireAuth('Login to start AI chat support.');
                     }
@@ -521,7 +513,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to send message
     async function sendMessage() {
-        if (!isLoggedIn) {
+        const auth = getAuthData();
+        if (!auth.isLoggedIn) {
             if (typeof window.requireAuth === 'function') {
                 window.requireAuth('Login to start AI chat support.');
             }
@@ -1311,9 +1304,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const context = prepareContext(userMessage);
             
             // Send to backend AI service
+            const auth = getAuthData();
             const response = await fetch(`${apiConfig.backendApiUrl}/api/ai/chat`, {
                 method: 'POST',
-                headers,
+                headers: auth.headers,
                 body: JSON.stringify({
                     message: userMessage,
                     context: context,

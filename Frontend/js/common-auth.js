@@ -204,8 +204,21 @@
         setupProfileDropdown();
     }
 
+    function getAuthData() {
+        const token = localStorage.getItem('authToken');
+        return {
+            isLoggedIn: Boolean(token),
+            authToken: token,
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            }
+        };
+    }
+
     window.requireAuth = requireAuth;
     window.openLoginPromptModal = openLoginPromptModal;
+    window.getAuthData = getAuthData;
     window.refreshCommonHeader = initializeCommonHeader;
 
     document.addEventListener('DOMContentLoaded', initializeCommonHeader);

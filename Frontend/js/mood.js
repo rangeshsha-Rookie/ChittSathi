@@ -1,15 +1,5 @@
-    // dynamic auth check to prevent stale state
-    const getAuthData = () => {
-        const token = localStorage.getItem('authToken');
-        return {
-            token: token,
-            isLoggedIn: Boolean(token),
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-            }
-        };
-    };
+    // Auth is now handled by the shared common-auth.js
+    // Dynamic getAuthData() is available globally
     
     // Elements for AI mood detection
     const video = document.getElementById('video');
@@ -166,7 +156,8 @@
     
     // Function to check if user has recently tracked their mood
     async function checkRecentMood() {
-        if (!isLoggedIn) {
+        const auth = getAuthData();
+        if (!auth.isLoggedIn) {
             return;
         }
 
@@ -174,7 +165,7 @@
             const apiUrl = `${apiConfig.backendApiUrl}/api/mood/recent`;
             const response = await fetch(apiUrl, {
                 method: 'GET',
-                headers
+                headers: auth.headers
             });
             
             const data = await response.json();
@@ -201,7 +192,8 @@
     
     // Function to load mood history from the server
     async function loadMoodHistory() {
-        if (!isLoggedIn) {
+        const auth = getAuthData();
+        if (!auth.isLoggedIn) {
             return;
         }
 
@@ -209,7 +201,7 @@
             const apiUrl = `${apiConfig.backendApiUrl}/api/mood?limit=30`;
             const response = await fetch(apiUrl, {
                 method: 'GET',
-                headers
+                headers: auth.headers
             });
             
             const data = await response.json();
@@ -627,7 +619,7 @@
 
                     fetch(apiUrl, {
                         method: 'POST',
-                        headers: isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {},
+                        headers: auth.isLoggedIn ? auth.headers : {},
                         body: formData
                     })
                     .then(r => r.json())
@@ -721,7 +713,7 @@
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
-                    ...(isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    ...(auth.isLoggedIn ? auth.headers : {})
                     // Multipart boundary is automatically handled by the browser for FormData
                 },
                 body: formData
