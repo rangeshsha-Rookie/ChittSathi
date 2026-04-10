@@ -568,61 +568,114 @@ document.addEventListener('DOMContentLoaded', function() {
                 countdown.style.display = 'none';
                 captureMoodImage();
             }
-        }, 1000);
-    }
-    
-    // Function to capture the mood image
+         // Function to capture the mood image — 3-frame sampling for accuracy
     function captureMoodImage() {
         try {
-            // Draw video to canvas for capture
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Log that we captured the image
-            console.log('Image captured from camera to canvas');
-            
-            // Stop webcam stream
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                video.srcObject = null;
-            }
-            
-            // Show analyzing message
-            result.innerHTML = '<div class="result-content">Analyzing your mood...</div>';
-            
-            // Convert canvas to blob and send to server with improved quality
-            canvas.toBlob(blob => {
-                console.log('Canvas converted to blob:', {
-                    size: blob.size,
-                    type: blob.type
-                });
-                
-                // Create FormData with proper file structure
-                const formData = new FormData();
-                // Create a proper File object instead of just a blob
-                const file = new File([blob], 'mood-capture.jpg', {
-                    type: 'image/jpeg',
-                    lastModified: Date.now()
-                });
-                formData.append('image', file);
-                
-                // Verify FormData contains the image
-                console.log('FormData created with proper File object');
-                
-                // Send image to Flask ML service for analysis
-                analyzeMoodImage(formData);
-            }, 'image/jpeg', 0.9); // Increased quality from 0.95 to 0.9 for better compatibility
+            result.innerHTML = '<div class="result-content"><i class="fas fa-spinner fa-spin"></i> Analyzing your mood (3 frames)...</div>';
+
+            let captureCount = 0;
+            const maxCaptures = 3;
+            const predictions = [];
+
+            const captureFrame = () => {
+                // Draw current live video frame to canvas
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(blob => {
+                    const file = new File([blob], 'mood-capture.jpg', {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+                    const formData = new FormData();
+                    formData.append('image', file); // 'image' matches aiController.js and HF app.py
+
+                    const apiUrl = `${apiConfig.backendApiUrl}/api/ai/analyze-face`;
+
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {},
+                        body: formData
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && data.success) {
+                            predictions.push({
+                                label: data.moodLabel,
+                                value: data.mood,
+                                confidence: data.confidence || 0
+                            });
+                            console.log(`Frame ${captureCount + 1} result:`, data.moodLabel, '| confidence:', data.confidence);
+                        } else {
+                            console.warn(`Frame ${captureCount + 1}: no face detected or failed`, data?.message);
+                        }
+                    })
+                    .catch(err => console.warn(`Frame ${captureCount + 1} fetch error:`, err))
+                    .finally(() => {
+                        captureCount++;
+
+                        if (captureCount < maxCaptures) {
+                            // Capture next frame after 600ms while webcam is still live
+                            setTimeout(captureFrame, 600);
+                        } else {
+                            // All frames captured — NOW stop webcam
+                            if (mediaStream) {
+                                mediaStream.getTracks().forEach(track => track.stop());
+                                video.srcObject = null;
+                            }
+
+                            if (predictions.length === 0) {
+                                result.innerHTML = `
+                                    <div class="result-content">
+                                        <span>⚠️ No face detected in any frame.</span>
+                                        <br><small>Ensure good lighting, face the camera directly, and try again.</small>
+                                    </div>`;
+                                result.style.backgroundColor = '#fdeded';
+                                captureBtn.disabled = false;
+                                return;
+                            }
+
+                            // Vote: pick the most frequently detected emotion across all 3 frames
+                            const freq = {};
+                            predictions.forEach(p => freq[p.label] = (freq[p.label] || 0) + 1);
+                            const bestLabel = Object.keys(freq).reduce((a, b) => freq[a] >= freq[b] ? a : b);
+                            const best = predictions.find(p => p.label === bestLabel);
+
+                            console.log(`Voting result: ${bestLabel} (appeared ${freq[bestLabel]}/${predictions.length} frames)`);
+                            displayAndSaveMood(best.value, best.label);
+                        }
+                    });
+                }, 'image/jpeg', 0.9);
+            };
+
+            // Kick off first frame capture
+            captureFrame();
+
         } catch (error) {
             console.error('Error in captureMoodImage:', error);
-            result.innerHTML = `
-                <div class="result-content">
-                    <span>Error capturing image: ${error.message}. Please try again.</span>
-                </div>
-            `;
+            result.innerHTML = `<div class="result-content">Error: ${error.message}. Please try again.</div>`;
             result.style.backgroundColor = '#fdeded';
             captureBtn.disabled = false;
         }
     }
-    
+
+    // Helper: display final voted result and trigger all side effects
+    async function displayAndSaveMood(moodValue, moodLabel) {
+        const emoji = moodEmojis[moodLabel] || '🤔';
+        result.innerHTML = `
+            <div class="result-content">
+                <span class="mood-emoji">${emoji}</span>
+                <span>You seem to be feeling <strong>${moodLabel}</strong></span>
+                <div class="save-status">✨ Auto-Saved to Mood History</div>
+            </div>`;
+        result.style.backgroundColor = '#edf7ed';
+
+        await loadMoodHistory();
+        updateMoodTrackerButton({ value: moodValue, label: moodLabel });
+        await loadRecommendations(moodLabel);
+        showSuccess(`Mood detected as ${moodLabel}!`);
+        captureBtn.disabled = false;
+    }
+
     // Update the analyzeMoodImage function to use the Node.js Backend Bridge (Fastest & Safest)
     async function analyzeMoodImage(formData) {
         try {
@@ -677,7 +730,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error connecting to Mood Architecture:', error);
             result.innerHTML = `
                 <div class="result-content">
-                    <span>Error: Could not connect to ChittSaathi AI. Please ensure your Backend & ML services are live.</span>
+                    <span>Error: Could not connect to ChittSaathi AI. Please ensure your Backend &amp; ML services are live.</span>
                     <br><small>${error.message}</small>
                 </div>
             `;

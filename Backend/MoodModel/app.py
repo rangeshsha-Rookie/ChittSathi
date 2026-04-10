@@ -59,12 +59,12 @@ async def health_check():
     return {"status": "healthy", "model_ready": model is not None}
 
 @app.post("/predict-face")
-async def predict_face(file: UploadFile = File(...)):
+async def predict_face(image: UploadFile = File(...)):
     if model is None or faceDetect is None:
         raise HTTPException(status_code=503, detail="Model service not fully initialized")
 
     try:
-        contents = await file.read()
+        contents = await image.read()
         nparr = np.frombuffer(contents, np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
