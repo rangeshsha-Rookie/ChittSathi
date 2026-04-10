@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // API Configuration
     const apiConfig = window.ENV_CONFIG || {
-        backendApiUrl: 'http://localhost:5001',
+        backendApiUrl: window.ENV_API_URL || 'http://localhost:5001',
         mlServiceUrl: 'http://localhost:5000/predict_emotion'
     };
     

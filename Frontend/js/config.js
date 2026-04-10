@@ -6,7 +6,7 @@
                          !window.location.hostname.includes('file://');
     
     if (isProduction) {
-        // Production environment
+        // Production environment - UPDATED FROM RENDER DASHBOARD
         window.ENV_API_URL = 'https://chittsaathi-backend.onrender.com';
         console.log('Running in production mode');
     } else {
@@ -21,6 +21,7 @@
     window.ENV_CONFIG = {
         // API URLs
         backendApiUrl: window.ENV_API_URL,
-        mlServiceUrl: window.ENV_API_URL.replace('5001', '5000') + '/predict_emotion'
+        // UPDATED FROM HUGGING FACE SCREENSHOT
+        mlServiceUrl: 'https://rangesh-28-chittsaathi-ml.hf.space/predict-face'
     };
 })();

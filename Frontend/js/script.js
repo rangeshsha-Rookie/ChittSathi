@@ -1448,7 +1448,7 @@ function getApiUrl() {
     }
 
     // Safe local fallback: backend API runs on 5001 (5000 is ML service)
-    return 'http://localhost:5001';
+    return window.ENV_API_URL || 'http://localhost:5001';
 }
 
 // Connect login and register buttons to dialogs

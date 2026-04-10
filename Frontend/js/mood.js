@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // API Configuration - will be loaded from server
     let apiConfig = {
-        backendApiUrl: 'http://localhost:5001', // Default fallback
+        backendApiUrl: window.ENV_API_URL || 'http://localhost:5001', // Default fallback
         mlServiceUrl: 'http://localhost:5000/predict_emotion' // Default fallback
     };
     
