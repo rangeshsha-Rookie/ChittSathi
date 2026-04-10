@@ -568,7 +568,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 countdown.style.display = 'none';
                 captureMoodImage();
             }
-         // Function to capture the mood image — 3-frame sampling for accuracy
+        }, 1000);
+    }
+    
+    // Function to capture the mood image — 3-frame sampling for accuracy
     function captureMoodImage() {
         try {
             result.innerHTML = '<div class="result-content"><i class="fas fa-spinner fa-spin"></i> Analyzing your mood (3 frames)...</div>';
