@@ -421,7 +421,7 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 - **IoT Devices Specialist**: Rahul Dudi — *(LinkedIn to be added)*
 
 ### Special Thanks
-- **Smart India Hackathon 2024** for providing the platform
+- **Smart India Hackathon 2025** for providing the platform
 - **Mental Health Professionals** who provided expert guidance
 - **Beta Testers** from various educational institutions
 - **Open Source Community** for the amazing tools and libraries
