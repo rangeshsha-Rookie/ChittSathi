@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/ChittSaathi-Mental%20Health%20Platform-6A0DAD?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tIEZvbnQgQXdlc29tZSBQcm8gNi41LjEgYnkgQGZvbnRhd2Vzb21lIC0gaHR0cHM6Ly9mb250YXdlc29tZS5jb20gTGljZW5zZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tL2xpY2Vuc2UgKENvbW1lcmNpYWwgTGljZW5zZSkgQ29weXJpZ2h0IDIwMjMgRm9udGljb25zLCBJbmMuIC0tPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xODQuMiAzOC4xYzEyLjQtMTMgMzIuOS0xMy4yIDQ1LjQtLjVMMzYxLjcgMTU5LjhjNS40IDUuNCA5LjkgMTEuNSAxMy4zIDE4LjFjNy40IDE0LjgxOSAyNS41NDIgMjAuMzY3IDM5LjggMTIuOGMxNC44LTcuOSAyMC4xLTI2LjQgMTIuMi00MS4ybC0uMS0uMUw0MDcuMiA5OS41YzM5LjctNDAuNiAxMDQuNy00MC42IDE0NC40IDBjNDAgNDAgNDAgMTA0LjkgMCAxNDQuOGwtNjcuNSA2N2MtMTguMyAxOC41LTQzLjUgMjguMS02OS41IDI3YS43OTgmI3gyRjsuNzk4IDAgMCAxLS4zLTEuNXYtMzguOGMwLTIyLjEtMTcuOS00MC00MC00MGgtLTg0LjFjLTE1LjMgMC0yOS0xMy43LTI5LTI4LjlzMTMuNy0yOSAyOS0yOWg4NCBjNTIuMSAwIDk0LjMgNDIuNCA5NCA5NC4ydjIuOCMOY49LjEgMTguNS0uMSAyNy43QzQ3NSAzNzQuNiA0MjIgNDI4LjcgMzU0LjMgNDM2LjFjLTY5LjkgNy42LTEzMy44LTMxLjItMTY0LjUtOTguMWMtNS44LTEyLjgtMTkuNi0yMS40LTM0LTIxLjRIMzRjLTE4LjggMC0zNC0xNS4yLTM0LTMzLjlzMTUuMi0zNCwzNC0zNGg1Ny45YzYgMCAxMS44LTIuNyAxNS42LTcuMkwxODQuMiAzOC4xeiIvPjwvc3ZnPg==" alt="ChittSaathi Logo">
   <h1>ChittSaathi</h1>
-  <p><em>Supporting student mental health across higher education institutions in India</em></p>
+  <p><em>Full-stack clinical-grade mental health platform with WebRTC video calling, Python ML mood detection, Pinecone vector search, and dual AI integration (Google Gemini + OpenAI) — built for students in higher education institutions across India</em></p>
   
   [![SIH Project](https://img.shields.io/badge/Smart_India_Hackathon-2025-blue.svg)](https://www.sih.gov.in/)
   [![Student Mental Health](https://img.shields.io/badge/Focus-Student_Mental_Health-green.svg)](https://chitt-sathi.vercel.app)
@@ -14,7 +14,7 @@
 
 # ChittSaathi 🧠
 
-## Digital Mental Health Support Platform for Students
+## Full-Stack Clinical-Grade Mental Health Platform for Students
 
 [ChittSaathi](https://mind-space-beryl.vercel.app/) is a comprehensive mental health platform specifically designed for students in higher education institutions across India. Our mission is to provide accessible, confidential, and personalized mental health support through innovative technology solutions.
 
