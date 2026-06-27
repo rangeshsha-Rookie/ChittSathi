@@ -393,28 +393,30 @@ We welcome contributions from the community! Please read our [Contributing Guide
 ## 📞 Support & Contact
 
 ### For Users
-- **Email Support**: chittsaathi.v1.1@gmail.com
+- **Email Support**: [rangeshsha@gmail.com](mailto:rangeshsha@gmail.com)
 
 ### For Developers
-- **Developer Support**: Saurabhtbj143@outlook.com
+- **Developer Support**: [rangeshsha@gmail.com](mailto:rangeshsha@gmail.com)
+- **GitHub**: [github.com/rangeshsha-Rookie](https://github.com/rangeshsha-Rookie)
+- **LinkedIn**: [linkedin.com/in/rangesh-gupta](https://linkedin.com/in/rangesh-gupta)
+- **Phone**: +91-9769118800
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-``
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/rangeshsha-Rookie/ChittSathi/blob/main/LICENSE) file for details.
 
 ## 🏆 Acknowledgments
 
 ### Team: ChittSaathi Warriors
-- **Project Lead & Project Manager**: Brajabehari Pal ---  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/brajabehari-pal-b697ba298/)
-- **Frontend & Backend Developer**: Saurabh Kumar --- [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabhtbj1201/)
-- **AI/ML Specialist & Database**: Sanjay Bhatti --- [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sanjay-bhatti/)
-- **Research & Documentation**: Sneha Sharma --- *(LinkedIn to be added)*
-- **UI/UX Designer**: Radha --- *(LinkedIn to be added)*
-- **IoT Devices Specialist**: Rahul Dudi --- *(LinkedIn to be added)*
+- **Full-Stack Developer & AI/ML Integration**: Rangesh Gupta — [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/rangesh-gupta) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/rangeshsha-Rookie)
+- **Project Lead & Project Manager**: Brajabehari Pal — [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/brajabehari-pal-b697ba298/)
+- **Frontend & Backend Developer**: Saurabh Kumar — [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabhtbj1201/)
+- **AI/ML Specialist & Database**: Sanjay Bhatti — [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sanjay-bhatti/)
+- **Research & Documentation**: Sneha Sharma — *(LinkedIn to be added)*
+- **UI/UX Designer**: Radha — *(LinkedIn to be added)*
+- **IoT Devices Specialist**: Rahul Dudi — *(LinkedIn to be added)*
 
 ### Special Thanks
 - **Smart India Hackathon 2024** for providing the platform
