@@ -31,7 +31,7 @@ ChittSaathi is **not** a simple chatbot or a basic wellness app. It is a full-st
 | 📡 **Real-time Signalling** | Socket.io | WebRTC signalling server + live chat infrastructure |
 | ☁️ **ML Hosting** | HuggingFace Spaces | Python mood model served as a live inference API endpoint |
 
-[ChittSaathi](https://mind-space-beryl.vercel.app/) is a comprehensive mental health platform specifically designed for students in higher education institutions across India. Our mission is to provide accessible, confidential, and personalized mental health support through innovative technology solutions.
+[ChittSaathi](https://chitt-sathi.vercel.app/) is a comprehensive mental health platform specifically designed for students in higher education institutions across India. Our mission is to provide accessible, confidential, and personalized mental health support through innovative technology solutions.
 
 Built with a **WebRTC-powered real-time video calling system** for live counsellor sessions, a **Python ML mood model** for emotion detection, **Pinecone vector search** for semantic memory and contextual recommendations, and **dual AI integration (Google Gemini + OpenAI)** for intelligent, context-aware mental health conversations — ChittSaathi goes far beyond a basic chatbot, delivering a full-stack clinical-grade support experience.
 
@@ -190,8 +190,8 @@ ChittSaathi/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Saurabhtbj1201/ChittSaathi/.git
-cd ChittSaathi-Digital-Mental-Health-Support-Platform-main
+git clone https://github.com/rangeshsha-Rookie/ChittSathi.git
+cd ChittSathi
 ```
 
 ### 2. Backend Setup
@@ -453,11 +453,11 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 *Made with ❤️ for student mental health and wellbeing*
 
-**[ChittSaathi](https://mind-space-beryl.vercel.app/) - Where Technology Meets Compassion**
+**[ChittSaathi](https://chitt-sathi.vercel.app/) - Where Technology Meets Compassion**
 
 ---
 
 **Version**: 1.0.0  
-**Last Updated**: January 2025  
+**Last Updated**: June 2026  
 **Status**: Active Development  
-**Maintained by**: [ChittSaathi Warriors Team](https://mind-space-beryl.vercel.app/team.html)
+**Maintained by**: Rangesh Gupta — [github.com/rangeshsha-Rookie](https://github.com/rangeshsha-Rookie)
