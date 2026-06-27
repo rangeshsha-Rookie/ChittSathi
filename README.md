@@ -18,6 +18,8 @@
 
 [ChittSaathi](https://mind-space-beryl.vercel.app/) is a comprehensive mental health platform specifically designed for students in higher education institutions across India. Our mission is to provide accessible, confidential, and personalized mental health support through innovative technology solutions.
 
+Built with a **WebRTC-powered real-time video calling system** for live counsellor sessions, a **Python ML mood model** for emotion detection, **Pinecone vector search** for semantic memory and contextual recommendations, and **dual AI integration (Google Gemini + OpenAI)** for intelligent, context-aware mental health conversations — ChittSaathi goes far beyond a basic chatbot, delivering a full-stack clinical-grade support experience.
+
 ---
 
 ## 🌟 Key Features
@@ -62,20 +64,23 @@
 - **TensorFlow.js**: Client-side machine learning for mood detection
 - **Chart.js**: Data visualization and analytics
 - **Progressive Web App**: Mobile-first approach with offline capabilities
+- **WebRTC**: Browser-native peer-to-peer real-time video calling for live counsellor sessions
 
 ### Backend
 - **Node.js**: Server-side JavaScript runtime
 - **Express.js**: Fast and minimal web framework
 - **MongoDB**: NoSQL database for scalable data storage
 - **JWT**: Secure authentication and authorization
-- **Socket.io**: Real-time communication for chat features
+- **Socket.io**: Real-time communication for chat features and WebRTC signalling
 
 ### AI/ML Services
 - **Python**: Core machine learning development
 - **TensorFlow**: Deep learning framework for emotion recognition
 - **OpenCV**: Computer vision processing
-- **Google AI APIs**: Natural language processing for chatbot
-- **Facial Expression Recognition**: Custom trained models for mood detection
+- **Google Gemini API**: Primary conversational AI for mental health chatbot responses
+- **OpenAI API**: Secondary AI integration for advanced language understanding and dual-model fallback
+- **Pinecone Vector Database**: Semantic vector search for contextual memory, personalised resource retrieval, and conversation history embeddings
+- **Facial Expression Recognition**: Custom trained Python ML model for mood detection and emotional state classification
 
 ### DevOps & Deployment
 - **Docker**: Containerization for consistent deployments
@@ -83,6 +88,7 @@
 - **Vercel**: Frontend hosting and deployment
 - **Railway/Render**: Backend API hosting
 - **MongoDB Atlas**: Cloud database hosting
+- **HuggingFace Spaces**: ML model hosting and inference endpoint
 
 ---
 
