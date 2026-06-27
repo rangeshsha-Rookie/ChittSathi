@@ -407,6 +407,8 @@ We welcome contributions from the community! Please read our [Contributing Guide
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/rangeshsha-Rookie/ChittSathi/blob/main/LICENSE) file for details.
 
+---
+
 ## 🏆 Acknowledgments
 
 ### Team: ChittSaathi Warriors
