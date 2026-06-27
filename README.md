@@ -399,7 +399,7 @@ We welcome contributions from the community! Please read our [Contributing Guide
 - **Developer Support**: [rangeshsha@gmail.com](mailto:rangeshsha@gmail.com)
 - **GitHub**: [github.com/rangeshsha-Rookie](https://github.com/rangeshsha-Rookie)
 - **LinkedIn**: [linkedin.com/in/rangesh-gupta](https://linkedin.com/in/rangesh-gupta)
-- **Phone**: +91-9769118800
+- 
 
 ---
 
