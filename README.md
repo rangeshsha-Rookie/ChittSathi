@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/ChittSaathi-Mental%20Health%20Platform-6A0DAD?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tIEZvbnQgQXdlc29tZSBQcm8gNi41LjEgYnkgQGZvbnRhd2Vzb21lIC0gaHR0cHM6Ly9mb250YXdlc29tZS5jb20gTGljZW5zZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tL2xpY2Vuc2UgKENvbW1lcmNpYWwgTGljZW5zZSkgQ29weXJpZ2h0IDIwMjMgRm9udGljb25zLCBJbmMuIC0tPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xODQuMiAzOC4xYzEyLjQtMTMgMzIuOS0xMy4yIDQ1LjQtLjVMMzYxLjcgMTU5LjhjNS40IDUuNCA5LjkgMTEuNSAxMy4zIDE4LjFjNy40IDE0LjgxOSAyNS41NDIgMjAuMzY3IDM5LjggMTIuOGMxNC44LTcuOSAyMC4xLTI2LjQgMTIuMi00MS4ybC0uMS0uMUw0MDcuMiA5OS41YzM5LjctNDAuNiAxMDQuNy00MC42IDE0NC40IDBjNDAgNDAgNDAgMTA0LjkgMCAxNDQuOGwtNjcuNSA2N2MtMTguMyAxOC41LTQzLjUgMjguMS02OS41IDI3YS43OTgmI3gyRjsuNzk4IDAgMCAxLS4zLTEuNXYtMzguOGMwLTIyLjEtMTcuOS00MC00MC00MGgtLTg0LjFjLTE1LjMgMC0yOS0xMy43LTI5LTI4LjlzMTMuNy0yOSAyOS0yOWg4NCBjNTIuMSAwIDk0LjMgNDIuNCA5NCA5NC4ydjIuOCMOY49LjEgMTguNS0uMSAyNy43QzQ3NSAzNzQuNiA0MjIgNDI4LjcgMzU0LjMgNDM2LjFjLTY5LjkgNy42LTEzMy44LTMxLjItMTY0LjUtOTguMWMtNS44LTEyLjgtMTkuNi0yMS40LTM0LTIxLjRIMzRjLTE4LjggMC0zNC0xNS4yLTM0LTMzLjlzMTUuMi0zNCwzNC0zNGg1Ny45YzYgMCAxMS44LTIuNyAxNS42LTcuMkwxODQuMiAzOC4xeiIvPjwvc3ZnPg==" alt="ChittSaathi Logo">
   <h1>ChittSaathi</h1>
-  <p><em>Full-stack clinical-grade mental health platform with WebRTC video calling, Python ML mood detection, Pinecone vector search, and dual AI integration (Google Gemini + OpenAI) — built for students in higher education institutions across India</em></p>
+  <p><em>Clinical-grade student mental health platform powered by <strong>WebRTC real-time video calling</strong>, a <strong>Python ML mood detection model</strong>, <strong>Pinecone vector search</strong> for semantic memory, and <strong>dual AI integration (Google Gemini + OpenAI)</strong> — built for higher education institutions across India</em></p>
   
   [![SIH Project](https://img.shields.io/badge/Smart_India_Hackathon-2025-blue.svg)](https://www.sih.gov.in/)
   [![Student Mental Health](https://img.shields.io/badge/Focus-Student_Mental_Health-green.svg)](https://chitt-sathi.vercel.app)
@@ -14,9 +14,22 @@
 
 # ChittSaathi 🧠
 
-## Full-Stack Clinical-Grade Mental Health Platform for Students
+## Clinical-Grade Student Mental Health Platform
 
 > **WebRTC video calling** · **Python ML mood model** · **Pinecone vector search** · **Dual AI (Google Gemini + OpenAI)**
+
+### 🔬 What Makes ChittSaathi Different
+
+ChittSaathi is **not** a simple chatbot or a basic wellness app. It is a full-stack, clinically-informed mental health platform purpose-built for students in India's higher education system. Here's what's actually under the hood:
+
+| Layer | Technology | What It Does |
+|---|---|---|
+| 🎥 **Video Calling** | WebRTC (browser-native P2P) | Live real-time counsellor sessions with zero latency |
+| 🧠 **Mood Detection** | Python ML model (TensorFlow + OpenCV) | Classifies emotional state from facial expressions via custom-trained CNN |
+| 🔍 **Semantic Memory** | Pinecone Vector Database | Stores conversation embeddings for contextual recall and personalised resource retrieval |
+| 🤖 **Conversational AI** | Google Gemini + OpenAI (dual integration) | Intelligent context-aware mental health dialogue with dual-model fallback |
+| 📡 **Real-time Signalling** | Socket.io | WebRTC signalling server + live chat infrastructure |
+| ☁️ **ML Hosting** | HuggingFace Spaces | Python mood model served as a live inference API endpoint |
 
 [ChittSaathi](https://mind-space-beryl.vercel.app/) is a comprehensive mental health platform specifically designed for students in higher education institutions across India. Our mission is to provide accessible, confidential, and personalized mental health support through innovative technology solutions.
 
@@ -132,7 +145,7 @@ ChittSaathi/
 │   │   ├── moodController.js   # Mood tracking API
 │   │   ├── aiController.js     # AI chat endpoints
 │   │   ├── profileController.js # User profile management
-│   │   └── settingsController.js # Account settings
+│   │   └── settingsController.js # Settings management
 │   ├── models/                 # Database schemas
 │   │   ├── User.js             # User model
 │   │   ├── Profile.js          # Profile model
