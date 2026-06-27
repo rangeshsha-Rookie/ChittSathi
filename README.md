@@ -16,6 +16,8 @@
 
 ## Full-Stack Clinical-Grade Mental Health Platform for Students
 
+> **WebRTC video calling** · **Python ML mood model** · **Pinecone vector search** · **Dual AI (Google Gemini + OpenAI)**
+
 [ChittSaathi](https://mind-space-beryl.vercel.app/) is a comprehensive mental health platform specifically designed for students in higher education institutions across India. Our mission is to provide accessible, confidential, and personalized mental health support through innovative technology solutions.
 
 Built with a **WebRTC-powered real-time video calling system** for live counsellor sessions, a **Python ML mood model** for emotion detection, **Pinecone vector search** for semantic memory and contextual recommendations, and **dual AI integration (Google Gemini + OpenAI)** for intelligent, context-aware mental health conversations — ChittSaathi goes far beyond a basic chatbot, delivering a full-stack clinical-grade support experience.
